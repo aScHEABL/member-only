@@ -5,3 +5,9 @@ exports.index = asyncHandler(async (req, res, next) => {
         title: "index test",
     })
 })
+
+exports.signUp = asyncHandler(async (req, res, next) => {
+    res.render("sign_up", {
+        title: "Sign up page",
+    })
+})
