@@ -11,3 +11,9 @@ exports.signUp = asyncHandler(async (req, res, next) => {
         title: "Sign up page",
     })
 })
+
+exports.login = asyncHandler(async (req, res, next) => {
+    res.render("login", {
+        title: "Login page",
+    })
+})
