@@ -1,0 +1,25 @@
+doctype html
+html(lang="en")
+head
+    link(
+      href="https://cdn.jsdelivr.net/npm/daisyui@2.6.0/dist/full.css"
+      rel="stylesheet"
+      type="text/css"
+    )
+    script(src="https://cdn.tailwindcss.com")
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title= title
+body 
+    <div class="navbar bg-base-100">
+        <div class="flex-1">
+            <a class="btn btn-ghost text-xl">Message Board</a>
+        </div>
+        <div class="flex-none">
+            <ul class="menu menu-horizontal px-1">
+                <li><a href="/sign-up">Sign up</a></li>
+                <li><a href="/login">Log in</a></li>
+            </ul>
+        </div>
+    </div>
+    block content
