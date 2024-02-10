@@ -2,6 +2,10 @@ const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 const testPassword = require("../utils/passwordStrength").testPassword;
 const Account = require("../models/account");
+const session = require("express-session");
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+
 
 exports.index_get = asyncHandler(async (req, res, next) => {
     res.render("index", {
@@ -52,6 +56,32 @@ exports.signUp_post = [
     .trim()
     .isLength({ min: 1 })
     .escape(),
+
+    passport.use(
+        new LocalStrategy(async (username, password, done) => {
+          try {
+            const user = await User.findOne({ username: username });
+            if (!user) {
+              return done(null, false, { message: "Incorrect username" });
+            };
+            if (user.password !== password) {
+              return done(null, false, { message: "Incorrect password" });
+            };
+            return done(null, user);
+          } catch(err) {
+            return done(err);
+          };
+        })
+      ),
+      
+      app.use(session({
+        secret: process.env.session_secret,
+        resave: false,
+        saveUninitialized: true
+      })),
+      app.use(passport.initialize),
+      app.use(passport.session()),
+      app.use(passport.urlencoded({ extended: false })),
 
     asyncHandler(async (req, res, next) => {
         const errors = validationResult(req);
