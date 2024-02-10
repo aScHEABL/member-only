@@ -32,14 +32,16 @@ exports.signUp_post = [
     .isLength({ min: 12 })
     .custom((value) => {
         const passwordStrength = testPassword(value);
-        console.log(passwordStrength);
         return passwordStrength <= 3;
     })
     .withMessage("Your password should contain at least 1 uppercase, 1 lowercase, and 1 numeric character. Minimum 12 characters.")
     .escape(),
 
-    body("repeat_password", "Please make sure your passwords match")
-    .custom((value, { req }) => value === req.body.password),
+    body("repeat_password")
+    .trim()
+    .custom((value, { req }) => value === req.body.password)
+    .withMessage("Please make sure your passwords match")
+    .escape(),
 
     body("first_name", "Please enter your first name")
     .trim()
@@ -55,7 +57,7 @@ exports.signUp_post = [
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-            console.log(errors.array());
+            // console.log(errors.array());
             res.render("sign_up", {
                 title: "Sign up page",
                 errors: errors.array(),
