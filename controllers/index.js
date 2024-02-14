@@ -3,6 +3,7 @@ const { body, validationResult } = require("express-validator");
 const testPassword = require("../utils/passwordStrength").testPassword;
 const Account = require("../models/account");
 const bcrypt = require("bcryptjs");
+const passport = require("passport");
 
 
 exports.index_get = asyncHandler(async (req, res, next) => {
@@ -100,4 +101,21 @@ exports.signUp_post = [
             }
         }
     })
+]
+
+exports.login_post = [
+    body("email", "It's not a valid email.")
+    .trim()
+    .isEmail()
+    .escape(),
+
+    body("password", "Your must enter a password to log-in.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+
+    passport.authenticate("local", { failureRedirect: "/login", failureMessage: true }),
+    function (req, res) {
+        res.redirect("/")
+    }
 ]

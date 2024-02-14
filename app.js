@@ -42,7 +42,7 @@ passport.use(
     try {
       const account = await Account.findOne({ email });
       if (!account) {
-        return done(null, false, { message: "Incorrect username" });
+        return done(null, false, { message: "Incorrect email" });
       };
       if (account.password !== password) {
         return done(null, false, { message: "Incorrect password" });
