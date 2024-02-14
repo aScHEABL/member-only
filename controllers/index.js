@@ -2,9 +2,7 @@ const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 const testPassword = require("../utils/passwordStrength").testPassword;
 const Account = require("../models/account");
-const session = require("express-session");
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
+const bcrypt = require("bcryptjs");
 
 
 exports.index_get = asyncHandler(async (req, res, next) => {
@@ -57,31 +55,6 @@ exports.signUp_post = [
     .isLength({ min: 1 })
     .escape(),
 
-    passport.use(
-        new LocalStrategy(async (username, password, done) => {
-          try {
-            const user = await User.findOne({ username: username });
-            if (!user) {
-              return done(null, false, { message: "Incorrect username" });
-            };
-            if (user.password !== password) {
-              return done(null, false, { message: "Incorrect password" });
-            };
-            return done(null, user);
-          } catch(err) {
-            return done(err);
-          };
-        })
-      ),
-      
-      app.use(session({
-        secret: process.env.session_secret,
-        resave: false,
-        saveUninitialized: true
-      })),
-      app.use(passport.initialize),
-      app.use(passport.session()),
-      app.use(passport.urlencoded({ extended: false })),
 
     asyncHandler(async (req, res, next) => {
         const errors = validationResult(req);
@@ -102,16 +75,28 @@ exports.signUp_post = [
                     errors: [{ msg: "This email has been registered!"}],
                 })  
             } else {
-                const newAccount = new Account({
-                    firstName: req.body.first_name,
-                    lastName: req.body.last_name,
-                    email: req.body.email,
-                    password: req.body.password,
-                    membershipStatus: "standard",
-                })
-
-                await newAccount.save();
-                res.redirect("/");
+                try {
+                    // Hash the password
+                    bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
+                        if (err) {
+                            throw new Error('Error hashing password');
+                        } else {
+                            // Create a new user object with the hashed password
+                            const newAccount = new Account({
+                                firstName: req.body.first_name,
+                                lastName: req.body.last_name,
+                                email: req.body.email,
+                                password: hashedPassword,
+                                membershipStatus: "standard",
+                            })                            
+                            // Save the user to the database
+                            await newAccount.save();
+                            res.redirect("/");
+                        }
+                    });
+                } catch (err) {
+                    return next(err);
+                }
             }
         }
     })
