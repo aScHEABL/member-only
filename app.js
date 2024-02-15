@@ -18,6 +18,8 @@ const logger = require('morgan');
 const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+const flash = require("connect-flash");
+const bcrypt = require("bcryptjs");
 
 const indexRouter = require('./routes/index');
 
@@ -31,37 +33,39 @@ app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
+app.use(flash());
 
 passport.use(
-  new LocalStrategy(async (email, password, done) => {
+  new LocalStrategy(
+  async (username, password, done) => {
     try {
-      const account = await Account.findOne({ email });
+      const account = await Account.findOne({ username });
       if (!account) {
+        console.log("Incorrect email")
         return done(null, false, { message: "Incorrect email" });
       };
-      if (account.password !== password) {
+      const match = await bcrypt.compare(password, account.password);
+      if (!match) {
         return done(null, false, { message: "Incorrect password" });
       };
-      return done(null, user);
+      return done(null, account);
     } catch(err) {
       return done(err);
     };
   })
 )
 
-passport.serializeUser((user, done) => {
-  done(null, user.id);
+passport.serializeUser((account, done) => {
+  done(null, account.id);
 });
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await User.findById(id);
-    done(null, user);
+    const account = await Account.findById(id);
+    done(null, account);
   } catch(err) {
     done(err);
   };
@@ -70,13 +74,13 @@ passport.deserializeUser(async (id, done) => {
 app.use(session({
   secret: process.env.session_secret,
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: true,
 }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
 
-
+app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -5,10 +5,10 @@ const Account = require("../models/account");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 
-
 exports.index_get = asyncHandler(async (req, res, next) => {
     res.render("index", {
-        title: "index test",
+        title: "Home page",
+        account: req.account,
     })
 })
 
@@ -21,11 +21,12 @@ exports.signUp_get = asyncHandler(async (req, res, next) => {
 exports.login_get = asyncHandler(async (req, res, next) => {
     res.render("login", {
         title: "Login page",
+        message: req.flash('error'),
     })
 })
 
 exports.signUp_post = [
-    body("email", "It's not a valid email.")
+    body("username", "It's not a valid email.")
     .trim()
     .isEmail()
     .escape(),
@@ -86,7 +87,7 @@ exports.signUp_post = [
                             const newAccount = new Account({
                                 firstName: req.body.first_name,
                                 lastName: req.body.last_name,
-                                email: req.body.email,
+                                username: req.body.username,
                                 password: hashedPassword,
                                 membershipStatus: "standard",
                             })                            
@@ -114,8 +115,9 @@ exports.login_post = [
     .isLength({ min: 1 })
     .escape(),
 
-    passport.authenticate("local", { failureRedirect: "/login", failureMessage: true }),
-    function (req, res) {
-        res.redirect("/")
-    }
+    passport.authenticate("local", { 
+        failureRedirect: "/login",
+        failureFlash: true,
+        successRedirect: "/",
+     })
 ]
