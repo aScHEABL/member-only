@@ -89,7 +89,7 @@ exports.signUp_post = [
                                 lastName: req.body.last_name,
                                 username: req.body.username,
                                 password: hashedPassword,
-                                membershipStatus: "standard",
+                                membershipStatus: "inactive",
                             })                            
                             // Save the user to the database
                             await newUser.save();
@@ -122,7 +122,7 @@ exports.login_post = [
      })
 ]
 
-exports.log_out = asyncHandler(async (req, res, next) => {
+exports.log_out_get = asyncHandler(async (req, res, next) => {
     req.logout((err) => {
         if (err) {
             return next(err);
