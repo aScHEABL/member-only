@@ -12,7 +12,18 @@ head
     title= title
     block head
 body 
-    if (!user)
+    if (user || currentUser)
+        -console.log(currentUser)
+        div(class="navbar bg-base-100")
+            div(class="flex-1")
+                a(class="btn btn-ghost text-xl" href="/") Message Board
+            div(class="flex-none")
+                ul(class="menu menu-horizontal px-1")
+                    li 
+                        a(href="/activation") Activate Account
+                    li 
+                        a(href="/log-out") Log out
+    else
         div(class="navbar bg-base-100")
             div(class="flex-1")
                 a(class="btn btn-ghost text-xl" href="/") Message Board
@@ -22,13 +33,6 @@ body
                         a(href="/sign-up") Sign up
                     li 
                         a(href="/login") Log in
-    else
-        div(class="navbar bg-base-100")
-            div(class="flex-1")
-                a(class="btn btn-ghost text-xl" href="/") Message Board
-            div(class="flex-none")
-                ul(class="menu menu-horizontal px-1")
-                    li 
-                        a(href="/log-out") Log out
+        
 
     block content

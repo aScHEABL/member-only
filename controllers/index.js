@@ -4,6 +4,7 @@ const testPassword = require("../utils/passwordStrength").testPassword;
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
+const mongoose = require("mongoose");
 
 exports.index_get = asyncHandler(async (req, res, next) => {
     res.render("index", {
@@ -22,6 +23,21 @@ exports.login_get = asyncHandler(async (req, res, next) => {
     res.render("login", {
         title: "Login page",
         message: req.flash('error'),
+    })
+})
+
+exports.log_out_get = asyncHandler(async (req, res, next) => {
+    req.logout((err) => {
+        if (err) {
+            return next(err);
+        }
+        res.redirect("/");
+    }) 
+})
+
+exports.activation_get = asyncHandler(async (req, res, next) => {
+    res.render("activation", {
+        title: "Activation Page",
     })
 })
 
@@ -62,7 +78,6 @@ exports.signUp_post = [
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-            // console.log(errors.array());
             res.render("sign_up", {
                 title: "Sign up page",
                 errors: errors.array(),
@@ -122,11 +137,31 @@ exports.login_post = [
      })
 ]
 
-exports.log_out_get = asyncHandler(async (req, res, next) => {
-    req.logout((err) => {
-        if (err) {
-            return next(err);
+exports.activation_post = [
+    body("password", "Please enter a valid activation code.")
+    .trim()
+    .isLength({ min: 1 })
+    .custom((value) => value === process.env.activation_code)
+    .escape(),
+
+    asyncHandler(async(req, res, next) => {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            console.error("There's an error.");
+            res.render("activation", {
+                title: "Activation Page",
+                errors: errors.array(),
+            })
+        } else if (error.isEmpty()) {
+            await User.findByIdAndUpdate(req.user.id, { membershipStatus: "active" });
+            if (user === null) {
+                const err = new Error("User not found.");
+                err.status = 404;
+                return err;
+            } else {
+                res.redirect("/")
+            }
         }
-        res.redirect("/");
-    }) 
-})
+    })
+]

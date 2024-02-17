@@ -11,8 +11,12 @@ router.get("/login", indexController.login_get);
 
 router.get("/log-out", indexController.log_out_get);
 
+router.get("/activation", indexController.activation_get);
+
 router.post("/sign-up", indexController.signUp_post);
 
 router.post("/login", indexController.login_post);
+
+router.post("/activation", indexController.activation_post);
 
 module.exports = router;
