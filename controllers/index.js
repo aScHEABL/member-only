@@ -1,14 +1,14 @@
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 const testPassword = require("../utils/passwordStrength").testPassword;
-const Account = require("../models/account");
+const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 
 exports.index_get = asyncHandler(async (req, res, next) => {
     res.render("index", {
         title: "Home page",
-        account: req.account,
+        user: req.user,
     })
 })
 
@@ -68,8 +68,8 @@ exports.signUp_post = [
                 errors: errors.array(),
             })
         } else if (errors.isEmpty()) {
-            const email = req.body.email;
-            const duplicatedEmail = await Account.exists({ email });
+            const username = req.body.username;
+            const duplicatedEmail = await User.exists({ username });
             if (duplicatedEmail) {
                 console.error("This email has been registered!");
                 res.render("sign_up", {
@@ -84,7 +84,7 @@ exports.signUp_post = [
                             throw new Error('Error hashing password');
                         } else {
                             // Create a new user object with the hashed password
-                            const newAccount = new Account({
+                            const newUser = new User({
                                 firstName: req.body.first_name,
                                 lastName: req.body.last_name,
                                 username: req.body.username,
@@ -92,7 +92,7 @@ exports.signUp_post = [
                                 membershipStatus: "standard",
                             })                            
                             // Save the user to the database
-                            await newAccount.save();
+                            await newUser.save();
                             res.redirect("/");
                         }
                     });
@@ -105,7 +105,7 @@ exports.signUp_post = [
 ]
 
 exports.login_post = [
-    body("email", "It's not a valid email.")
+    body("username", "It's not a valid email.")
     .trim()
     .isEmail()
     .escape(),
@@ -119,12 +119,5 @@ exports.login_post = [
         failureRedirect: "/login",
         failureFlash: true,
         successRedirect: "/",
-        
-        function(req, res) {
-            res.render("index", {
-                title: "Home page",
-                account: req.account // Pass the logged-in user to the template
-            });
-        }
      })
 ]

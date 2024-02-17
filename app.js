@@ -23,7 +23,7 @@ const bcrypt = require("bcryptjs");
 
 const indexRouter = require('./routes/index');
 
-const Account = require("./models/account");
+const User = require("./models/user");
 
 const app = express();
 
@@ -42,30 +42,30 @@ passport.use(
   new LocalStrategy(
   async (username, password, done) => {
     try {
-      const account = await Account.findOne({ username });
-      if (!account) {
+      const user = await User.findOne({ username });
+      if (!user) {
         console.log("Incorrect email")
         return done(null, false, { message: "Incorrect email" });
       };
-      const match = await bcrypt.compare(password, account.password);
+      const match = await bcrypt.compare(password, user.password);
       if (!match) {
         return done(null, false, { message: "Incorrect password" });
       };
-      return done(null, account);
+      return done(null, user);
     } catch(err) {
       return done(err);
     };
   })
 )
 
-passport.serializeUser((account, done) => {
-  done(null, account.id);
+passport.serializeUser((user, done) => {
+  done(null, user.id);
 });
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const account = await Account.findById(id);
-    done(null, account);
+    const user = await User.findById(id);
+    done(null, user);
   } catch(err) {
     done(err);
   };
