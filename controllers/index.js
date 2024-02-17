@@ -4,7 +4,6 @@ const testPassword = require("../utils/passwordStrength").testPassword;
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
-const mongoose = require("mongoose");
 
 exports.index_get = asyncHandler(async (req, res, next) => {
     res.render("index", {
@@ -136,11 +135,13 @@ exports.login_post = [
     .isLength({ min: 1 })
     .escape(),
 
+    
     passport.authenticate("local", { 
         failureRedirect: "/login",
         failureFlash: true,
         successRedirect: "/",
-     })
+    })
+
 ]
 
 exports.activation_post = [
