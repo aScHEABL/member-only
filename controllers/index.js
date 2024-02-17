@@ -36,6 +36,12 @@ exports.log_out_get = asyncHandler(async (req, res, next) => {
 })
 
 exports.activation_get = asyncHandler(async (req, res, next) => {
+    if (!req.user) {
+        res.render("error", {
+            title: "Error Page",
+            error: "You need to log in first!",
+        })
+    }
     res.render("activation", {
         title: "Activation Page",
     })
@@ -148,7 +154,6 @@ exports.activation_post = [
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-            console.error("There's an error.");
             res.render("activation", {
                 title: "Activation Page",
                 errors: errors.array(),
