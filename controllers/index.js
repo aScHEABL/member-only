@@ -121,3 +121,12 @@ exports.login_post = [
         successRedirect: "/",
      })
 ]
+
+exports.log_out = asyncHandler(async (req, res, next) => {
+    req.logout((err) => {
+        if (err) {
+            return next(err);
+        }
+        res.redirect("/");
+    }) 
+})

@@ -9,6 +9,8 @@ router.get("/sign-up", indexController.signUp_get);
 
 router.get("/login", indexController.login_get);
 
+router.get("/log-out", indexController.log_out);
+
 router.post("/sign-up", indexController.signUp_post);
 
 router.post("/login", indexController.login_post);
