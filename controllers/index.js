@@ -119,5 +119,12 @@ exports.login_post = [
         failureRedirect: "/login",
         failureFlash: true,
         successRedirect: "/",
+        
+        function(req, res) {
+            res.render("index", {
+                title: "Home page",
+                account: req.account // Pass the logged-in user to the template
+            });
+        }
      })
 ]
