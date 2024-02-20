@@ -21,6 +21,7 @@ exports.signUp_get = asyncHandler(async (req, res, next) => {
 exports.login_get = asyncHandler(async (req, res, next) => {
     res.render("login", {
         title: "Login page",
+        user: req.user,
         message: req.flash('error'),
     })
 })
@@ -110,10 +111,11 @@ exports.signUp_post = [
                                 username: req.body.username,
                                 password: hashedPassword,
                                 membershipStatus: "inactive",
+                                isAdmin: false,
                             })                            
                             // Save the user to the database
                             await newUser.save();
-                            res.redirect("/");
+                            res.redirect("/login");
                         }
                     });
                 } catch (err) {
@@ -148,26 +150,32 @@ exports.activation_post = [
     body("password", "Please enter a valid activation code.")
     .trim()
     .isLength({ min: 1 })
-    .custom((value) => value === process.env.activation_code)
     .escape(),
 
-    asyncHandler(async(req, res, next) => {
-        const errors = validationResult(req);
+    asyncHandler(async (req, res, next) => {
+        const activationCode = req.body.password;
 
-        if (!errors.isEmpty()) {
-            res.render("activation", {
-                title: "Activation Page",
-                errors: errors.array(),
-            })
-        } else if (error.isEmpty()) {
+        if (activationCode === process.env.member_code) {
+            // Membership activation
             await User.findByIdAndUpdate(req.user.id, { membershipStatus: "active" });
-            if (user === null) {
-                const err = new Error("User not found.");
-                err.status = 404;
-                return err;
-            } else {
-                res.redirect("/")
-            }
+        } else if (activationCode === process.env.admin_code) {
+            // Administrator activation
+            await User.findByIdAndUpdate(req.user.id, { isAdmin: true, membershipStatus: "active" });
+        } else {
+            // Invalid activation code
+            return res.render("activation", {
+                title: "Activation Page",
+                errors: [{ msg: "Invalid activation code." }],
+            })
         }
+
+        // If not logged in
+        if (!req.user) {
+            const err = new Error("User not found.");
+            err.status = 404;
+            throw err;
+        }
+
+        res.redirect("/");
     })
 ]

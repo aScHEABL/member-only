@@ -19,6 +19,14 @@ body
                 a(class="btn btn-ghost text-xl" href="/") Message Board
             div(class="flex-none")
                 ul(class="menu menu-horizontal px-1")
+                    div(class="flex items-center")
+                        case true
+                            when (currentUser.isAdmin === true)
+                                div(class="badge badge-error gap-2") Admin
+                            when (currentUser.membershipStatus === 'active')
+                                div(class="badge badge-success gap-2") Club Member
+                            when (currentUser.membershipStatus === 'inactive')
+                                div(class="badge badge-warning gap-2") Tourist
                     li 
                         a(href="/activation") Activate Account
                     li 
