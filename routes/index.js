@@ -13,6 +13,8 @@ router.get("/log-out", indexController.log_out_get);
 
 router.get("/activation", indexController.activation_get);
 
+router.get("/message", indexController.message_get);
+
 router.post("/sign-up", indexController.signUp_post);
 
 router.post("/login", indexController.login_post);
