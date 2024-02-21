@@ -47,6 +47,18 @@ exports.activation_get = asyncHandler(async (req, res, next) => {
     })
 })
 
+exports.message_get = asyncHandler(async (req, res, next) => {
+    if (!req.user) {
+        res.render("error", {
+            title: "Error Page",
+            error: "You need to log in first!",
+        })
+    }
+    res.render("message", {
+        title: "Message Form"
+    })
+})
+
 exports.signUp_post = [
     body("username", "It's not a valid email.")
     .trim()
