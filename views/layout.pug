@@ -18,12 +18,13 @@ head
 body 
     if (user || currentUser)
         -console.log(currentUser)
-        button(
-                class="btn btn-info fixed top-2 left-[45%]"
-                onclick="location.href='/message';"
-            )
-            span(class="material-symbols-outlined") add
-            | POST A MESSAGE
+        if (url === "/")
+            button(
+                    class="btn btn-info fixed top-2 left-[45%]"
+                    onclick="location.href='/message';"
+                )
+                span(class="material-symbols-outlined") add
+                | POST A MESSAGE
 
         div(class="navbar bg-base-100")
             div(class="flex-1")

@@ -9,6 +9,7 @@ exports.index_get = asyncHandler(async (req, res, next) => {
     res.render("index", {
         title: "Home page",
         user: req.user,
+        url: "/",
     })
 })
 
