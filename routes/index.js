@@ -21,4 +21,6 @@ router.post("/login", indexController.login_post);
 
 router.post("/activation", indexController.activation_post);
 
+router.post("/message", indexController.message_post);
+
 module.exports = router;

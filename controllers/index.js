@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 const testPassword = require("../utils/passwordStrength").testPassword;
 const User = require("../models/user");
+const Message = require("../models/message");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 
@@ -190,5 +191,43 @@ exports.activation_post = [
         }
 
         res.redirect("/");
+    })
+]
+
+exports.message_post = [
+    body("message", "You must enter a message")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+
+    asyncHandler(async (req, res, next) => {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            res.render("message", {
+                title: "Message Form",
+                errors: errors.array(),
+            })
+        } else if (errors.isEmpty()) {
+            const date = new Date();
+            const options = {
+                year: "numeric",
+                month: "numeric",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+                hour12: false
+            }
+            const dateString = date.toLocaleString("zh-TW", options);
+            console.log(dateString);
+            const newMessage = new Message({
+                user: req.user,
+                msg: req.body.message,
+                timestamp: dateString,
+            })
+    
+            await newMessage.save()
+            res.redirect("/");
+        }
     })
 ]
