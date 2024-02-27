@@ -12,7 +12,10 @@ const UserSchema = new Schema({
 }, { collection: "user" })
 
 UserSchema.virtual("fullName").get(function() {
-    return `${this.firstName}${this.lastName}`;
+    return `${this.firstName} ${this.lastName}`;
 })
+
+UserSchema.set('toJSON', { virtuals: true });
+UserSchema.set('toObject', { virtuals: true });
 
 module.exports = mongoose.model("user", UserSchema);

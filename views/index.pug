@@ -1,20 +1,18 @@
 extends layout.pug
 
 block head 
-    script.
-        const message_array = !{JSON.stringify(message_array)}
-        console.log(message_array)
 
 block content
-    message_array.forEach((message) => {
-        div(class="flex items-start justify-center gap-2.5")
-            div(class="flex flex-col gap-1 w-full max-w-[700px]")
-                div(class="flex items-center space-x-2 rtl:space-x-reverse")
-                    span(class="text-lg font-semibold dark:text-white") message.user
-                    span(class="text-sm font-bold text-gray-400") message.timestamp
-                div(class="flex flex-col leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700")
-                    p(class="text-lg font-normal text-gray-900 dark:text-white") message.msg
-    })
+    if message_array
+        - message_array.forEach((message) => {
+                div(class="flex items-start justify-center gap-2.5")
+                    div(class="flex flex-col gap-1 w-full max-w-[700px]")
+                        div(class="flex items-center space-x-2 rtl:space-x-reverse")
+                            span(class="text-lg font-semibold dark:text-white")= message.user.fullName
+                            span(class="text-sm font-bold text-gray-400")= message.timestamp
+                        div(class="flex flex-col leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700")
+                            p(class="text-lg font-normal text-gray-900 dark:text-white")= message.msg
+        - })
 
     //- div(class="flex items-start justify-center gap-2.5")
     //-     div(class="flex flex-col gap-1 w-full max-w-[700px]")

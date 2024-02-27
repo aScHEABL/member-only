@@ -7,7 +7,10 @@ const bcrypt = require("bcryptjs");
 const passport = require("passport");
 
 exports.index_get = asyncHandler(async (req, res, next) => {
-    const message_array = await Message.find();
+    const message_array = await Message
+    .find()
+    .populate("user")
+    .exec()
 
     res.render("index", {
         title: "Home page",
