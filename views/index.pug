@@ -4,7 +4,18 @@ block head
 
 block content
     if message_array
-        if (user || currentUser)
+        if (user.isAdmin === true || currentUser.isAdmin === true)
+            - message_array.forEach((message) => {
+                    div(class="flex items-start justify-center gap-2.5")
+                        div(class="flex flex-col gap-1 w-full max-w-[700px]")
+                            div(class="flex items-center space-x-2 rtl:space-x-reverse")
+                                span(class="text-lg font-semibold dark:text-white")= message.user.fullName
+                                span(class="text-sm font-bold text-gray-400")= message.timestamp
+                                <input type="submit" value="Delete" class="btn btn-error" />
+                            div(class="flex flex-col leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700")
+                                p(class="text-lg font-normal text-gray-900 dark:text-white")= message.msg
+            - })
+        else if (user || currentUser)
             - message_array.forEach((message) => {
                     div(class="flex items-start justify-center gap-2.5")
                         div(class="flex flex-col gap-1 w-full max-w-[700px]")
