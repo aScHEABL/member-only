@@ -23,4 +23,6 @@ router.post("/activation", indexController.activation_post);
 
 router.post("/message", indexController.message_post);
 
+router.post("/delete-message/:messageIndex", indexController.delete_message_post);
+
 module.exports = router;
