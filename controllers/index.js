@@ -239,18 +239,25 @@ exports.message_post = [
 ]
 
 exports.delete_message_post = asyncHandler(async(req, res, next) => {
-    if (req.user.isAdmin === true) {
-        const message_array = await Message
-        .find()
-        .populate("user")
-        .exec()
-
-        const messageIndex = req.params.messageIndex;
-        await Message.deleteOne(message_array[messageIndex]);
-        res.redirect("/");
-    } else if (!req.user.isAdmin === false) {
-        const err = new Error("This user is not admin.");
-        err.status = 404;
-        throw err;
+    if (!req.user) {
+        res.render("error", {
+            title: "Error Page",
+            error: "You need to log in first!",
+        })
+    } else {
+        if (req.user.isAdmin === true) {
+            const message_array = await Message
+            .find()
+            .populate("user")
+            .exec()
+    
+            const messageIndex = req.params.messageIndex;
+            await Message.deleteOne(message_array[messageIndex]);
+            res.redirect("/");
+        } else if (!req.user.isAdmin === false) {
+            const err = new Error("This user is not admin.");
+            err.status = 404;
+            throw err;
+        }
     }
 })

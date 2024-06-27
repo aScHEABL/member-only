@@ -7,7 +7,6 @@ block content
         //- If the user is an admin
         if (user || currentUser)
             if (user.isAdmin === true || currentUser.isAdmin === true)
-                form(method="post" action='/delete-message/' + messageIndex)
                     div(class="flex gap-8 flex-wrap")
                         - message_array.forEach((message, index) => {
                                 div(class="w-full flex justify-center")
@@ -15,9 +14,10 @@ block content
                                         div(class="flex items-center space-x-2 rtl:space-x-reverse ")
                                             span(class="text-lg font-semibold dark:text-white")= message.user.fullName
                                             span(class="text-sm font-bold text-gray-400")= message.timestamp
-                                            input(type="hidden" name="messageIndex" value=index)
-                                            button(type="submit" class="btn btn-square btn-sm" onclick='messageIndex = index')
-                                                span(class="material-symbols-outlined") delete
+                                            form(method="post" action='/delete-message/' + index)
+                                                input(type="hidden" name="messageIndex" value=index)
+                                                button(type="submit" class="btn btn-square btn-sm")
+                                                    span(class="material-symbols-outlined") delete
                                         div(class="flex flex-col leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700")
                                             p(class="text-lg font-normal text-gray-900 dark:text-white")= message.msg
                         - })
